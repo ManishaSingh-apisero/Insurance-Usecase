@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<flow name="GetInsuranceUserData" doc:id="16b915e8-170a-462f-a6e0-2a67ffb94764" >
+		<set-variable value="#[attributes.queryParams.dbSource]" doc:name="Set Variable" doc:id="d7d64711-cd01-457c-bc48-725085945d5d" variableName="database"/>
+		<set-variable value="#[attributes.queryParams.company]" doc:name="Set Variable" doc:id="65250897-652b-4be4-8728-ce02fc212208" variableName="company"/>
+		<choice doc:name="Choice" doc:id="640337da-22b6-4396-a095-f19279116281" >
+			<when expression='#[vars.database == "Salesforce"]'>
+				<http:request method="GET" doc:name="Request" doc:id="5d76c071-a3f7-4dad-9be4-36237cbe4695" config-ref="HTTP_Request_configuration" path="/api/insurance">
+					<http:query-params ><![CDATA[#[{
+	company: vars.company
+}]]]></http:query-params>
+				</http:request>
+				<ee:transform doc:name="Transform Message" doc:id="89faa92c-963a-4fec-b249-c75b20494783" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<logger level="INFO" doc:name="Logger" doc:id="c84215c7-d63c-4a69-9c3b-0ab0b6a96bb4" />
+			</when>
+			<when expression='#[vars.database == "PostgreSql"]'>
+				<logger level="INFO" doc:name="Logger" doc:id="f9b12f09-7baf-4694-96eb-12b8bb22aa52" message='#["this is postgres data"]'/>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message" doc:id="5a2cf70e-3e8e-4bd9-b485-20ef934715b8" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message": "Please enter valid dbSource!"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+	</flow>
+	<flow name="GetClientDetails" doc:id="9f01bf3d-e8e4-4899-a70d-19ef58e11ab5" >
+		<http:request method="GET" doc:name="Request" doc:id="4434fbd9-7546-4883-bb65-527f835e8d9a" config-ref="HTTP_Request_configuration1" path="/api/{clientId}">
+			<http:uri-params ><![CDATA[#[{
+  'clientId': attributes.uriParams.Id
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="8337952e-1225-4269-9467-44d2a0462d9f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="49d0a639-9f68-4eb9-937b-78b164a74e14" message='#["flow completed!"]'/>
+	</flow>
+	<flow name="PutDataInRespectiveDB" doc:id="2ebc8605-78e9-435c-be25-8940898c8b33" >
+		<set-variable value="#[payload.ClientId]" doc:name="Set Variable" doc:id="551c3616-770b-4d84-9f10-51624b29b84c" variableName="clientId"/>
+		<choice doc:name="Choice" doc:id="c2b875e2-1e9c-4b3b-91ea-8d6599d72b61" >
+			<when expression="#[vars.clientId &gt; 100]">
+				<flow-ref doc:name="Flow Reference" doc:id="47b9d463-af73-48c3-aa6c-0aaddfa38727" name="Salesforce_PutFlow"/>
+			</when>
+			<when expression="#[vars.clientId &lt; 100]">
+				<flow-ref doc:name="Flow Reference" doc:id="76b48374-a67d-4bfc-81c2-faf2d71c49e6" name="Postgres_PutFlow"/>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message" doc:id="4a28f8a8-6c84-43b1-ac03-e35b2af5fa7a" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	"message": "invalid input"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+	</flow>
+	<flow name="Salesforce_PutFlow" doc:id="ecbc0a90-4bab-487f-8c12-54ca01ccb582" >
+		<http:request method="GET" doc:name="Request" doc:id="1c57a83b-8ba8-4f69-b497-0bb54f661b2c" config-ref="Salesforce_HTTP_Request_configuration" path="/api/Insurance"/>
+		<ee:transform doc:name="Transform Message" doc:id="dd58d072-bd94-48e6-849a-41ff70af3798" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="Postgres_PutFlow" doc:id="15d20645-5124-46cc-83b4-d7987b4c6ef1" >
+		<logger level="INFO" doc:name="Logger" doc:id="c70acb5e-bc31-4df0-ad81-95b4d163be7d" />
+	</flow>
+</mule>

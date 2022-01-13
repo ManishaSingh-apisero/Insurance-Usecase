@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="8e3add8b-7d41-44a1-8680-57c4aae63ef3" >
+		<http:request-connection host="sys-salesforce-db-insurance.us-e2.cloudhub.io" />
+	</http:request-config>
+	<http:request-config name="HTTP_Request_configuration1" doc:name="HTTP Request configuration" doc:id="d266171f-27db-40f0-9f5d-b224400aee8f" >
+		<http:request-connection host="sys-external-db-insurance.us-e2.cloudhub.io" />
+	</http:request-config>
+	<http:request-config name="Salesforce_HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="4b5fa1ec-50b9-44df-80ec-55da67c4d08d" >
+		<http:request-connection host="sys-salesforce-db-insurance.us-e2.cloudhub.io" />
+	</http:request-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="4ac72175-a4e3-492e-b7bd-2054087f06c3" >
+		<db:my-sql-connection host="sql6.freemysqlhosting.net" port="3306" user="sql6463799" password="VWyYZXbQnQ" database="sql6463799" />
+	</db:config>
+</mule>

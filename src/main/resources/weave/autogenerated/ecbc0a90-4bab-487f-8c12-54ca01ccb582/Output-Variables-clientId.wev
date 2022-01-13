@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_ecbc0a90_4bab_487f_8c12_54ca01ccb582_Output_Variables_clientId = Number
+

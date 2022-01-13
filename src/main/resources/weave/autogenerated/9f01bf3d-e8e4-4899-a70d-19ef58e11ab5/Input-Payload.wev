@@ -1,0 +1,21 @@
+%dw 2.0
+
+type auto_9f01bf3d_e8e4_4899_a70d_19ef58e11ab5_Input_Payload = {
+  DateOfBirth: String, 
+  InsuranceId: Number, 
+  Email: String, 
+  Gender: String, 
+  Occupation: String, 
+  ClientName: String, 
+  Qualification: String, 
+  ClientId: Number, 
+  ContactNumber: String, 
+  PanNumber: String, 
+  AdharNumber: String, 
+  NomineeName: String, 
+  Age: Number, 
+  AnnualIncome: Number, 
+  InsurancePlan: String, 
+  _?: Any
+}
+
