@@ -19,11 +19,35 @@
 
 	<build>
 		<plugins>
+		<plugin>
+				<groupId>org.mule.tools.maven</groupId>
+				<artifactId>mule-maven-plugin</artifactId>
+				<version>3.4.2</version>
+				<extensions>true</extensions>
+				<configuration>
+					<cloudHubDeployment>
+						<uri>https://anypoint.mulesoft.com</uri>
+						<muleVersion>4.4.0</muleVersion>
+						<username>manisha1704</username>
+						<password>M@nisha170498</password>
+						<applicationName>process-insurance-api</applicationName>
+						<environment>Sandbox</environment>
+						<region>us-east-2</region>
+						<workers>1</workers>
+						<workerType>MICRO</workerType>
+						<properties>
+							<http.port>8081</http.port>
+						</properties>
+						<objectStoreV2>true</objectStoreV2>
+					</cloudHubDeployment>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>
 				<version>3.0.0</version>
 			</plugin>
+			
 			<plugin>
 				<groupId>org.mule.tools.maven</groupId>
 				<artifactId>mule-maven-plugin</artifactId>
